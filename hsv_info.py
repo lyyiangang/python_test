@@ -35,7 +35,7 @@ def dump_info(img, pts):
         min_hsv[z] = min_hsv[z] if min_hsv[z] < val else val
         max_hsv[z] = max_hsv[z] if max_hsv[z] > val else val
 
-    print("min_vals:{}, max_vals:{}".format(min_hsv, max_hsv))
+    print("min_hsv:{}, max_hsv:{}".format(min_hsv, max_hsv))
 
 
 def on_mouse_cb(event, x, y, flags, userdata):
@@ -47,10 +47,10 @@ def on_mouse_cb(event, x, y, flags, userdata):
         ply_pts.clear()
     img = plot(img, ply_pts)
 
-
+cv2.namedWindow("test")
+cv2.setMouseCallback("test", on_mouse_cb)
 while True:
     cv2.imshow("test", img)
-    cv2.setMouseCallback("test", on_mouse_cb)
     key = cv2.waitKey(1)
     if key > 0:
         if chr(key) == 'q':
