@@ -8,3 +8,6 @@ SeverWrapper.py send command to ClientWrapper.py.
    ```
    python ClientWrapper.py
    ```
+# svd分解例子
+[rigid-transform-with-scale.py](./rigid-transform-with-scale.py)
+[svd.py](./svd.py)
