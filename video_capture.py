@@ -20,7 +20,6 @@ parser.add_argument('-d', '--device', default = 0, type = int)
 parser.add_argument('--use_uvc_backend', default = 0, type = int)
 parser.add_argument('--use_uvc_time', default = 0, type = int)
 parser.add_argument('--vis', default = 1, type = int)
-parser.add_argument('--calib_mode', default = 0, type = int)
 parser.add_argument('--resolution_width', default = 1280, type = int)
 parser.add_argument('--resolution_height', default = 720, type = int)
 args = parser.parse_args()
@@ -95,18 +94,7 @@ def run():
     for cam_id, device_name in zip(valid_devices, idx_to_name):
         cap = VideoCapture(cam_id, use_uvc = args.use_uvc_backend)
         
-        if 'diweitai' in device_name:
-            logging.warn('force set diweitai camera resolution to 1920*1080') 
-            # cap.set_resolution((1280,720))
-            cap.set_resolution((args.resolution_width, args.resolution_height))
-
-        elif 'cam0135' in device_name:
-            logging.warn('force set cam0135 camera resolution to 1280*720') 
-            # cap.set_resolution((1280,720))
-            cap.set_resolution((args.resolution_width, args.resolution_height))
-
-        else:
-            cap.set_resolution((args.resolution_width, args.resolution_height))
+        cap.set_resolution((args.resolution_width, args.resolution_height))
         caps.append(cap)
         cur_dir = os.path.join(args.output_dir, '{}_stage_{}'.format(device_name, args.stage))
         output_dirs.append(cur_dir)
@@ -135,10 +123,6 @@ def run():
             ret = cv2.imwrite(out_name, cur_img, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
             assert ret, 'can not write image to {}'.format(out_name)
         
-        if args.calib_mode:
-            print('calib mode, only one frame is saved')
-            break
-
         if args.vis:    
             for cam_name, img in zip(idx_to_name, imgs):
                 cv2.line(img, (0, int(img.shape[0]/2)),(int(img.shape[1]),int(img.shape[0]/2)),(0,0,0),1)
