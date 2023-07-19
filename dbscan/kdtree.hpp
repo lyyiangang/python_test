@@ -1,4 +1,4 @@
-// g++ -o kdtree kdtree.cpp --std=c++11 && ./kdtree
+// g++ -o build/kdtree kdtree.cpp --std=c++11 && ./build/kdtree
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -9,9 +9,11 @@ using T = float;
 
 struct Point {
     T data[DIM] = {};
-    Point(T x = 0, T y = 0) {
+    int idx = 0;
+    Point(T x = 0, T y = 0, int in_idx = -1) {
         data[0] = x;
         data[1] = y;
+        idx = in_idx;
     }
 
     T operator[](int idx){
@@ -48,7 +50,7 @@ struct Node {
 
 class KDTree {
     public:
-        KDTree(std::vector<Point>& points);
+        KDTree(const std::vector<Point>& points);
 
         ~KDTree();
 

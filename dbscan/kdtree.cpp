@@ -1,4 +1,3 @@
-// g++ -o build/kdtree kdtree.cpp --std=c++11 && ./build/kdtree
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -6,8 +5,12 @@
 #include <ostream>
 #include "kdtree.hpp"
 
-KDTree::KDTree(std::vector<Point>& points) {
-    m_root = buildKdTree(points);
+KDTree::KDTree(const std::vector<Point>& points) {
+    auto pts = points;
+    for(int idx = 0; idx < pts.size(); idx ++){
+        pts[idx].idx = idx;
+    }
+    m_root = buildKdTree(pts);
 }
 
 KDTree::~KDTree(){

@@ -3,6 +3,8 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+// #include "kdtree.hpp"
+#include <memory>
 
 struct Point {
     double x, y;
@@ -19,11 +21,14 @@ double euclideanDistance(const Point& p1, const Point& p2) {
 
 class DBScan{
     public:
-        DBScan(const std::vector<Point>& points, double epsilon, int minPoints);
+        DBScan(const std::vector<Point>& points);
+        std::vector<int> run(double epsilon, int minPoints);
         std::vector<int> regionQuery(const std::vector<Point>& points, int pointIdx, double epsilon);
         void expandCluster(const std::vector<Point>& points, int pointIdx, int clusterId, std::vector<int>& cluster, double epsilon, int minPoints);
         std::vector<int> getCluster()const;
 
     private:
         std::vector<int> m_clusters;
+        std::vector<Point> m_points;
+        // std::unique_ptr<KDTree> m_kdtree;//use kdtree to boost.
 };
