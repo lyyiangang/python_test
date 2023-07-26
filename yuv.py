@@ -53,16 +53,24 @@ def convert_nv12_to_yuv444_fast(width, height, nv12_data):
     y_buf = nv12_data[:y_start]
     u_buf = nv12_data[y_start::2]
     v_buf = nv12_data[y_start+1::2]
-    # yuv_420=np.concatenate((y_buf, u_buf, v_buf)).reshape(-1, width)
 
-    # import ipdb;ipdb.set_trace()
-    # bgr=cv2.cvtColor(yuv_420, cv2.COLOR_YUV2RGB_I420)
+    # yuv_420=np.concatenate((y_buf, u_buf, v_buf)).reshape(-1, width)
+    # bgr=cv2.cvtColor(yuv_420, cv2.COLOR_YUV2BGR_I420)
     # cv2.imshow('tmp', bgr)
     # cv2.waitKey(0)
+
+
+    # u_buf = np.repeat(u_buf[None, :], 2, axis=0)
+    # u_buf = np.repeat(u_buf[:, :, None], 2, axis = -1)
+    # u_buf = u_buf.reshape(height, width)
+    # v_buf = np.repeat(v_buf[None, :], 2, axis=0)
+    # v_buf = np.repeat(v_buf[:, :, None], 2, axis = -1)
+    # v_buf = v_buf.reshape(height, width)
+    # import ipdb;ipdb.set_trace()
     u_buf = u_buf.reshape(height//2, -1)
     v_buf = v_buf.reshape(height//2, -1)
-    u_buf = cv2.resize(u_buf, (width, height))
-    v_buf = cv2.resize(v_buf, (width, height))
+    u_buf = cv2.resize(u_buf, (width, height), cv2.INTER_NEAREST)
+    v_buf = cv2.resize(v_buf, (width, height), cv2.INTER_NEAREST)
     yuv444 = np.dstack((y_buf.reshape(height, width), u_buf, v_buf))
     return yuv444
     
@@ -164,16 +172,17 @@ def test():
     nv12=convert_rgb_to_nv12(rgb)
     yuv444 = convert_nv12_to_yuv444_fast(w, h, nv12)
     yuv444_naive = convert_nv12_to_yuv444_naive(w, h, nv12)
+    # yuv444_ocv = cv2.cvtColor(rgb, cv2.COLOR_RGB2YUV)
     print(f'mean:{np.abs(yuv444 - yuv444_naive).mean()}')
     # rgb = cv2.cvtColor(yuv444, cv2.COLOR_YCrCb2BGR)
-    rgb_test = np.array([(1, 0, 1.13983),
-                        (1, -0.39465, -0.58060),
-                        (1, 2.03211, 0)]) @ yuv444.reshape(-1, 3).T
-    rgb_test = rgb_test.T.reshape(h, w, 3).astype(np.uint8)
-    rgb = cv2.cvtColor(yuv444.astype(np.uint8), cv2.COLOR_YCrCb2BGR)
-    bgr_test = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
-    cv2.imshow('img', bgr_test)
-    cv2.imshow('bgr_new', bgr_new)
+    # rgb_test = np.array([(1, 0, 1.13983),
+    #                     (1, -0.39465, -0.58060),
+    #                     (1, 2.03211, 0)]) @ yuv444.reshape(-1, 3).T
+    # rgb_test = rgb_test.T.reshape(h, w, 3).astype(np.uint8)
+    rgb = cv2.cvtColor(yuv444, cv2.COLOR_YUV2RGB)
+    bgr = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
+    cv2.imshow('img', bgr)
+    cv2.imshow('ori', bgr_new)
     cv2.waitKey(0)
     # import ipdb;ipdb.set_trace()
     # cv2.imshow('bgr_new', bgr_new)
@@ -189,6 +198,8 @@ def test():
 #     yuv444_data = convert_nv12_to_yuv444(width, height, nv12_data)
 
 
+def test_aug():
+    pass
 test()
 # test2()
 # test_2()
