@@ -27,15 +27,25 @@ def dump_info(img, pts):
     hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     cv2.imshow("hsv_img", hsv_img)
     pts = np.array(pts, np.int)
-    min_hsv = [1.0e6, 1.0e6, 1.0e6]
-    max_hsv = [-1, -1, -1]
-    for ((x,y,z),val) in np.ndenumerate(hsv_img):
-        if cv2.pointPolygonTest(pts, (y, x), False) <= 0:
-            continue
-        min_hsv[z] = min_hsv[z] if min_hsv[z] < val else val
-        max_hsv[z] = max_hsv[z] if max_hsv[z] > val else val
+    # min_hsv = [1.0e6, 1.0e6, 1.0e6]
+    # max_hsv = [-1, -1, -1]
+    # for ((x,y,z),val) in np.ndenumerate(hsv_img):
+    #     if cv2.pointPolygonTest(pts, (y, x), False) <= 0:
+    #         continue
+    #     min_hsv[z] = min_hsv[z] if min_hsv[z] < val else val
+    #     max_hsv[z] = max_hsv[z] if max_hsv[z] > val else val
 
-    print("min_hsv:{}, max_hsv:{}".format(min_hsv, max_hsv))
+    # print("min_hsv:{}, max_hsv:{}".format(min_hsv, max_hsv))
+    res = []
+    for pt in pts:
+        cur_hsv = hsv_img[pt[1], pt[0], :]
+        res.append(cur_hsv)
+    min_hsv = np.min(res, axis = 0).astype(int)
+    max_hsv = np.max(res, axis=0).astype(int)
+    print(f'mean:{np.mean(res, axis=0)},min:{min_hsv}, max:{max_hsv}, res:{res}')
+    # thre_img = cv2.inRange(hsv_img, (min_hsv[0], min_hsv[1], min_hsv[2]), (max_hsv[0], max_hsv[1], max_hsv[2]))
+    thre_img = cv2.inRange(hsv_img, min_hsv, max_hsv)
+    cv2.imshow('threshold', thre_img)
 
 
 def on_mouse_cb(event, x, y, flags, userdata):
